@@ -68,3 +68,7 @@ class Rhombus(Shape):
     def inradius(self):
         if (self.d1 is not None) and (self.d2 is not None) and (self.d1 > 0) and (self.d2 > 0):
             return (math.pi * self.d1 * self.d1 * self.d2 * self.d2) / (4 * ((self.d1 * self.d1) + (self.d2 * self.d2)))
+
+
+def read_shapes():
+    file = open('q6_shapes.txt', 'r')
