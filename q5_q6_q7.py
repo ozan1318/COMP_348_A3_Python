@@ -14,38 +14,17 @@ class Shape:
         if type(self).__name__ == 'Shape':
             print("perimeter: undefined, area: undefined")
         elif type(self).__name__ == 'Circle':
-            if self.area() is not None and self.perimeter() is not None:
-                print("perimeter: ", round(self.perimeter(), 5), ", area: ", round(self.area(), 5), sep="")
-            elif self.area() is not None:
-                print("perimeter: ", self.perimeter(), ", area: ", round(self.area(), 5), sep="")
-            elif self.perimeter() is not None:
-                print("perimeter: ", round(self.perimeter(), 5), ", area: ", self.area(), sep="")
-            else:
-                print("perimeter: ", self.perimeter(), ", area: ", self.area(), sep="")
+            self.print_helper()
             if not self.valid:
                 print("Error: Invalid Circle")
         elif type(self).__name__ == 'Ellipse':
-            if self.area() is not None and self.perimeter() is not None:
-                print("perimeter: ", round(self.perimeter(), 5), ", area: ", round(self.area(), 5), sep="")
-            elif self.area() is not None:
-                print("perimeter: ", self.perimeter(), ", area: ", round(self.area(), 5), sep="")
-            elif self.perimeter() is not None:
-                print("perimeter: ", round(self.perimeter(), 5), ", area: ", self.area(), sep="")
-            else:
-                print("perimeter: ", self.perimeter(), ", area: ", self.area(), sep="")
+            self.print_helper()
             if self.valid:
                 print("linear eccentricity:", round(self.eccentricity(), 5))
             else:
                 print("Error: Invalid Ellipse")
         elif type(self).__name__ == 'Rhombus':
-            if self.area() is not None and self.perimeter() is not None:
-                print("perimeter: ", round(self.perimeter(), 5), ", area: ", round(self.area(), 5), sep="")
-            elif self.area() is not None:
-                print("perimeter: ", self.perimeter(), ", area: ", round(self.area(), 5), sep="")
-            elif self.perimeter() is not None:
-                print("perimeter: ", round(self.perimeter(), 5), ", area: ", self.area(), sep="")
-            else:
-                print("perimeter: ", self.perimeter(), ", area: ", self.area(), sep="")
+            self.print_helper()
             if self.valid:
                 if self.inradius() is not None:
                     print("in-radius:", round(self.inradius(), 5))
@@ -59,6 +38,16 @@ class Shape:
 
     def area(self):
         pass
+
+    def print_helper(self):
+        if self.area() is not None and self.perimeter() is not None:
+            print("perimeter: ", round(self.perimeter(), 5), ", area: ", round(self.area(), 5), sep="")
+        elif self.area() is not None:
+            print("perimeter: ", self.perimeter(), ", area: ", round(self.area(), 5), sep="")
+        elif self.perimeter() is not None:
+            print("perimeter: ", round(self.perimeter(), 5), ", area: ", self.area(), sep="")
+        else:
+            print("perimeter: ", self.perimeter(), ", area: ", self.area(), sep="")
 
 
 class Circle(Shape):
@@ -124,16 +113,19 @@ class Rhombus(Shape):
             return (math.pi * self.d1 * self.d1 * self.d2 * self.d2) / (4 * ((self.d1 * self.d1) + (self.d2 * self.d2)))
 
 
-def read_shapes(id_val, filename, shape_list):
+def read_shapes(id_val, filename, shape_list, shape_dict):
     with open(filename, 'r') as file:
         lines = file.readlines()
 
     for x in lines:
         if x == "shape\n":
             shape_list.append(Shape(id_val))
+            shape_dict["Shape"] += 1
         else:
             y = x.split(" ")
             if y[0] == "circle":
+                shape_dict["Shape"] += 1
+                shape_dict["Circle"] += 1
                 if len(y) == 2:
                     if int(y[1]) > 0:
                         shape_list.append(Circle(id_val, int(y[1])))
@@ -142,6 +134,8 @@ def read_shapes(id_val, filename, shape_list):
                 else:
                     shape_list.append(Circle(id_val, None, False))
             elif y[0] == "ellipse":
+                shape_dict["Shape"] += 1
+                shape_dict["Ellipse"] += 1
                 if len(y) == 3:
                     if int(y[1]) >= 0 and int(y[2]) >= 0:
                         shape_list.append(Ellipse(id_val, int(y[1]), int(y[2])))
@@ -150,6 +144,8 @@ def read_shapes(id_val, filename, shape_list):
                 else:
                     shape_list.append(Ellipse(id_val, None, None))
             elif y[0] == "rhombus":
+                shape_dict["Shape"] += 1
+                shape_dict["Rhombus"] += 1
                 if len(y) == 3:
                     if int(y[1]) >= 0 and int(y[2]) >= 0:
                         shape_list.append(Rhombus(id_val, int(y[1]), int(y[2])))
@@ -160,15 +156,28 @@ def read_shapes(id_val, filename, shape_list):
         id_val += 1
 
 
-def q6_main():
+def shape_dict_print(shape_dict):
+    print("\n\nStatistics:")
+    print("    Circle(s):", shape_dict["Circle"], "\n    Ellipse(s):", shape_dict["Ellipse"], "\n    Rhombus(es):", shape_dict["Rhombus"], "\n    --\n    Shape(s):", shape_dict["Shape"])
+
+
+def q7_main():
     id_val = 1
     filename = 'q6_shapes.txt'
     shape_list = []
+    shape_dict = {
+        "Shape": 0,
+        "Circle": 0,
+        "Ellipse": 0,
+        "Rhombus": 0
+    }
 
-    read_shapes(id_val, filename, shape_list)
+    read_shapes(id_val, filename, shape_list, shape_dict)
 
     for x in shape_list:
         x.print()
 
+    shape_dict_print(shape_dict)
 
-q6_main()
+
+q7_main()
